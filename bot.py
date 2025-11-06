@@ -27,7 +27,7 @@ async def cmd_start(message: types.Message):
     kb.add(
         KeyboardButton(
             text="🎮 Играть",
-            web_app=WebAppInfo(url=f"https://your-app.up.railway.app/webapp/index.html")
+            web_app=WebAppInfo(url=f"https://fight-bot-production.up.railway.app/webapp/index.html")
         )
     )
     await message.answer("Добро пожаловать в бой с ботом!", reply_markup=kb.as_markup(resize_keyboard=True))
