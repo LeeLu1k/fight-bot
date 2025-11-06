@@ -1,23 +1,21 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Бой с ботом</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Игра с ботом</title>
+<style>
+body { font-family: Arial; text-align: center; padding: 50px; }
+button { padding: 20px; font-size: 20px; margin: 10px; }
+</style>
 </head>
 <body>
-  <h1>Бой с ботом</h1>
-  <div id="status">
-    <p>Ваше здоровье: <span id="playerHealth">100</span></p>
-    <p>Здоровье бота: <span id="botHealth">100</span></p>
-  </div>
-  <div id="actions">
-    <button onclick="playerMove('attack')">Атака</button>
-    <button onclick="playerMove('defense')">Защита</button>
-    <button onclick="playerMove('heal')">Исцеление</button>
-  </div>
-  <div id="log"></div>
-  <script src="script.js"></script>
+<h1>Бой с ботом 🕹</h1>
+<p>Выберите действие:</p>
+<button onclick="attack()">Атаковать</button>
+<button onclick="heal()">Лечиться</button>
+<p id="status"></p>
+
+<script src="script.js"></script>
 </body>
 </html>
