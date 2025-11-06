@@ -1,48 +1,46 @@
-import os
-import asyncio
 from aiogram import Bot, Dispatcher, types
+from aiogram.types import WebAppInfo, KeyboardButton, ReplyKeyboardMarkup
 from aiogram.filters import Command
-from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, WebAppInfo
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
 import uvicorn
+import os
 
-# --- Переменные окружения ---
-TOKEN = os.environ.get("BOT_TOKEN")
-PORT = int(os.environ.get("PORT", 8000))
+BOT_TOKEN = os.getenv("BOT_TOKEN")  # добавь токен бота в Railway Secrets
 
-# --- Инициализация бота ---
-bot = Bot(token=TOKEN)
+bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
-# --- FastAPI для Web App ---
 app = FastAPI()
-app.mount("/webapp", StaticFiles(directory="webapp"), name="webapp")
 
-# --- Команда /start ---
+# --- Telegram Commands ---
 @dp.message(Command("start"))
-async def cmd_start(message: types.Message):
-    kb = ReplyKeyboardBuilder()
-    kb.add(
-        KeyboardButton(
-            text="🎮 Играть",
-            web_app=WebAppInfo(url=f"https://fight-bot-production.up.railway.app/webapp/index.html")
-        )
+async def start_command(message: types.Message):
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="Играть 🕹", web_app=WebAppInfo(url="https://fight-bot-production.up.railway.app/web_app/index.html"))]
+        ],
+        resize_keyboard=True
     )
-    await message.answer("Добро пожаловать в бой с ботом!", reply_markup=kb.as_markup(resize_keyboard=True))
+    await message.answer("Привет! Нажми на кнопку, чтобы играть с ботом.", reply_markup=keyboard)
 
-# --- Обработка данных из Web App ---
-@dp.message()
-async def handle_webapp(message: types.Message):
-    if message.web_app_data:
-        await message.answer(f"Вы отправили данные из Web App: {message.web_app_data.data}")
+# --- Game Webhook ---
+@app.post("/webhook")
+async def webhook(data: dict):
+    # Тут можно обработать события из Web App
+    print(data)
+    return {"status": "ok"}
 
-# --- Запуск бота и FastAPI ---
-async def start_bot():
-    await dp.start_polling(bot)
-
+# --- Запуск FastAPI и Telegram Bot ---
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.create_task(start_bot())
-    uvicorn.run(app, host="0.0.0.0", port=PORT)
+    import asyncio
+    from aiogram import executor
+
+    async def main():
+        from aiogram import Bot, Dispatcher
+        import logging
+
+        logging.basicConfig(level=logging.INFO)
+        # Запуск бота
+        await dp.start_polling(bot)
+
+    asyncio.run(main())
